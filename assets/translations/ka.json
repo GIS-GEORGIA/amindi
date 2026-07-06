@@ -1,0 +1,17 @@
+{
+  "app_title": "ამინდი",
+  "map": {
+    "layer_standard": "სტანდარტული",
+    "layer_terrain": "რელიეფი",
+    "selected_point": "არჩეული წერტილი",
+    "forecast_coming_soon": "4 მოდელის პროგნოზა დაემატება Phase 2-ში (ECMWF · ICON-EU · GFS · YR)"
+  },
+  "settings": {
+    "title": "პარამეტრები",
+    "language": "ენა",
+    "theme": "თემა",
+    "theme_light": "ნათელი",
+    "theme_dark": "მუქი",
+    "theme_system": "სისტემური"
+  }
+}

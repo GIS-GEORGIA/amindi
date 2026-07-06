@@ -1,0 +1,17 @@
+{
+  "app_title": "Amindi",
+  "map": {
+    "layer_standard": "Standard",
+    "layer_terrain": "Terrain",
+    "selected_point": "Selected point",
+    "forecast_coming_soon": "4-model forecast arrives in Phase 2 (ECMWF · ICON-EU · GFS · YR)"
+  },
+  "settings": {
+    "title": "Settings",
+    "language": "Language",
+    "theme": "Theme",
+    "theme_light": "Light",
+    "theme_dark": "Dark",
+    "theme_system": "System"
+  }
+}
