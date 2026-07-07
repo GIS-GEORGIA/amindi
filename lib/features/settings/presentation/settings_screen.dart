@@ -2,6 +2,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../map/presentation/providers/base_map_opacity_provider.dart';
 import 'providers/theme_mode_provider.dart';
 
 class SettingsScreen extends ConsumerWidget {
@@ -57,6 +58,32 @@ class SettingsScreen extends ConsumerWidget {
             selected: {themeMode},
             onSelectionChanged: (selection) =>
                 ref.read(themeModeProvider.notifier).set(selection.first),
+          ),
+          const SizedBox(height: 24),
+          Text(
+            'settings.map_opacity'.tr(),
+            style: Theme.of(context).textTheme.titleMedium,
+          ),
+          const SizedBox(height: 8),
+          Row(
+            children: [
+              Icon(Icons.opacity,
+                  size: 20,
+                  color: Theme.of(context).colorScheme.onSurfaceVariant),
+              Expanded(
+                child: Slider(
+                  min: 0.2,
+                  max: 1,
+                  value: ref.watch(baseMapOpacityProvider),
+                  onChanged: (v) =>
+                      ref.read(baseMapOpacityProvider.notifier).set(v),
+                ),
+              ),
+              Text(
+                '${(ref.watch(baseMapOpacityProvider) * 100).round()}%',
+                style: Theme.of(context).textTheme.labelLarge,
+              ),
+            ],
           ),
         ],
       ),

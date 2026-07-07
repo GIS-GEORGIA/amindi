@@ -2,6 +2,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../map/presentation/providers/base_map_opacity_provider.dart';
 import '../../domain/overlay_type.dart';
 import '../overlay_renderer.dart';
 import '../providers/overlay_providers.dart';
@@ -73,7 +74,30 @@ class _SliderCard extends ConsumerWidget {
     return Card(
       child: Padding(
         padding: const EdgeInsets.fromLTRB(16, 8, 16, 12),
-        child: grid.when(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Row(
+              children: [
+                Icon(Icons.opacity,
+                    size: 18, color: theme.colorScheme.onSurfaceVariant),
+                Expanded(
+                  child: SizedBox(
+                    height: 28,
+                    child: Slider(
+                      min: 0.2,
+                      max: 1,
+                      value: ref.watch(baseMapOpacityProvider),
+                      onChanged: (v) => ref
+                          .read(baseMapOpacityProvider.notifier)
+                          .set(v),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            const Divider(height: 8),
+            grid.when(
           loading: () => const Padding(
             padding: EdgeInsets.all(8),
             child: LinearProgressIndicator(),
@@ -128,6 +152,8 @@ class _SliderCard extends ConsumerWidget {
               ],
             );
           },
+        ),
+          ],
         ),
       ),
     );

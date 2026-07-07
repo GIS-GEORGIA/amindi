@@ -11,6 +11,7 @@ import '../../overlay/domain/overlay_type.dart';
 import '../../overlay/presentation/providers/overlay_providers.dart';
 import '../../overlay/presentation/widgets/overlay_controls.dart';
 import '../../settings/presentation/settings_screen.dart';
+import 'providers/base_map_opacity_provider.dart';
 
 enum BaseLayer { standard, terrain }
 
@@ -46,11 +47,14 @@ class _MapScreenState extends ConsumerState<MapScreen> {
               onTap: (_, point) => _showPointSheet(context, point),
             ),
             children: [
-              TileLayer(
-                urlTemplate: _baseLayer == BaseLayer.standard
-                    ? MapConstants.osmTileUrl
-                    : MapConstants.openTopoTileUrl,
-                userAgentPackageName: MapConstants.userAgentPackageName,
+              Opacity(
+                opacity: ref.watch(baseMapOpacityProvider),
+                child: TileLayer(
+                  urlTemplate: _baseLayer == BaseLayer.standard
+                      ? MapConstants.osmTileUrl
+                      : MapConstants.openTopoTileUrl,
+                  userAgentPackageName: MapConstants.userAgentPackageName,
+                ),
               ),
               if (overlayType != OverlayType.none)
                 ref

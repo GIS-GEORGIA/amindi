@@ -75,6 +75,7 @@
     "theme": "თემა",
     "theme_light": "ნათელი",
     "theme_dark": "მუქი",
-    "theme_system": "სისტემური"
+    "theme_system": "სისტემური",
+    "map_opacity": "საბაზისო რუკის გამჭვირვალეობა"
   }
 }
