@@ -159,17 +159,11 @@ class _MapScreenState extends ConsumerState<MapScreen> {
       context: context,
       isScrollControlled: true,
       useSafeArea: true,
-      builder: (context) => DraggableScrollableSheet(
-        expand: false,
-        initialChildSize: 0.6,
-        minChildSize: 0.3,
-        maxChildSize: 0.95,
-        snap: true,
-        snapSizes: const [0.6, 0.95],
-        builder: (context, scrollController) => ComparisonPanel(
+      builder: (context) => FractionallySizedBox(
+        heightFactor: 0.7,
+        child: ComparisonPanel(
           lat: point.latitude,
           lon: point.longitude,
-          scrollController: scrollController,
         ),
       ),
     );

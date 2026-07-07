@@ -12,12 +12,12 @@ class ComparisonPanel extends ConsumerStatefulWidget {
     super.key,
     required this.lat,
     required this.lon,
-    required this.scrollController,
+    this.scrollController,
   });
 
   final double lat;
   final double lon;
-  final ScrollController scrollController;
+  final ScrollController? scrollController;
 
   @override
   ConsumerState<ComparisonPanel> createState() => _ComparisonPanelState();
@@ -109,7 +109,7 @@ class _ForecastTable extends StatelessWidget {
 
   final ForecastBundle bundle;
   final bool daily;
-  final ScrollController scrollController;
+  final ScrollController? scrollController;
 
   static const _timeColumnWidth = 64.0;
 
