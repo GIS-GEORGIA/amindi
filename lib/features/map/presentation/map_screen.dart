@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:latlong2/latlong.dart';
 
 import '../../../core/constants/map_constants.dart';
+import '../../forecast/presentation/widgets/comparison_panel.dart';
 
 enum BaseLayer { standard, terrain }
 
@@ -91,26 +92,17 @@ class _MapScreenState extends ConsumerState<MapScreen> {
   void _showPointSheet(BuildContext context, LatLng point) {
     showModalBottomSheet<void>(
       context: context,
-      builder: (context) => Padding(
-        padding: const EdgeInsets.all(24),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              'map.selected_point'.tr(),
-              style: Theme.of(context).textTheme.titleMedium,
-            ),
-            const SizedBox(height: 8),
-            Text(
-              '${point.latitude.toStringAsFixed(4)}, '
-              '${point.longitude.toStringAsFixed(4)}',
-              style: Theme.of(context).textTheme.headlineSmall,
-            ),
-            const SizedBox(height: 16),
-            Text('map.forecast_coming_soon'.tr()),
-            const SizedBox(height: 8),
-          ],
+      isScrollControlled: true,
+      useSafeArea: true,
+      builder: (context) => DraggableScrollableSheet(
+        expand: false,
+        initialChildSize: 0.6,
+        minChildSize: 0.3,
+        maxChildSize: 0.95,
+        builder: (context, scrollController) => ComparisonPanel(
+          lat: point.latitude,
+          lon: point.longitude,
+          scrollController: scrollController,
         ),
       ),
     );

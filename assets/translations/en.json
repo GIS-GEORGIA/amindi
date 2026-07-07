@@ -3,8 +3,21 @@
   "map": {
     "layer_standard": "Standard",
     "layer_terrain": "Terrain",
-    "selected_point": "Selected point",
-    "forecast_coming_soon": "4-model forecast arrives in Phase 2 (ECMWF · ICON-EU · GFS · YR)"
+    "selected_point": "Selected point"
+  },
+  "forecast": {
+    "hourly": "Hourly",
+    "daily": "Daily",
+    "failed": "Failed to load",
+    "retry": "Retry"
+  },
+  "models": {
+    "res": {
+      "ecmwf": "~9 km",
+      "icon_eu": "~6.5 km",
+      "gfs": "~13 km",
+      "yr": "point"
+    }
   },
   "settings": {
     "title": "Settings",

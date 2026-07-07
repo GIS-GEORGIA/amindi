@@ -3,8 +3,21 @@
   "map": {
     "layer_standard": "სტანდარტული",
     "layer_terrain": "რელიეფი",
-    "selected_point": "არჩეული წერტილი",
-    "forecast_coming_soon": "4 მოდელის პროგნოზა დაემატება Phase 2-ში (ECMWF · ICON-EU · GFS · YR)"
+    "selected_point": "არჩეული წერტილი"
+  },
+  "forecast": {
+    "hourly": "საათობრივი",
+    "daily": "დღიური",
+    "failed": "ვერ ჩაიტვირთა",
+    "retry": "თავიდან ცდა"
+  },
+  "models": {
+    "res": {
+      "ecmwf": "~9 კმ",
+      "icon_eu": "~6.5 კმ",
+      "gfs": "~13 კმ",
+      "yr": "წერტილოვანი"
+    }
   },
   "settings": {
     "title": "პარამეტრები",
