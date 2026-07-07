@@ -6,6 +6,7 @@ import 'package:latlong2/latlong.dart';
 
 import '../../../core/constants/map_constants.dart';
 import '../../forecast/presentation/widgets/comparison_panel.dart';
+import '../../settings/presentation/settings_screen.dart';
 
 enum BaseLayer { standard, terrain }
 
@@ -54,6 +55,23 @@ class _MapScreenState extends ConsumerState<MapScreen> {
                 ],
               ),
             ],
+          ),
+          SafeArea(
+            child: Align(
+              alignment: Alignment.topRight,
+              child: Padding(
+                padding: const EdgeInsets.only(top: 8, right: 8),
+                child: IconButton.filledTonal(
+                  icon: const Icon(Icons.settings_outlined),
+                  tooltip: 'settings.title'.tr(),
+                  onPressed: () => Navigator.of(context).push(
+                    MaterialPageRoute<void>(
+                      builder: (_) => const SettingsScreen(),
+                    ),
+                  ),
+                ),
+              ),
+            ),
           ),
           SafeArea(
             child: Align(
