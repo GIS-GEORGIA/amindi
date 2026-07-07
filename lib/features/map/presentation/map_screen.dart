@@ -144,11 +144,11 @@ class _MapScreenState extends ConsumerState<MapScreen> {
                   segments: [
                     ButtonSegment(
                       value: BaseLayer.standard,
-                      label: Text('map.layer_standard'.tr()),
+                      label: _segmentLabel('map.layer_standard'.tr()),
                     ),
                     ButtonSegment(
                       value: BaseLayer.terrain,
-                      label: Text('map.layer_terrain'.tr()),
+                      label: _segmentLabel('map.layer_terrain'.tr()),
                     ),
                   ],
                   selected: {_baseLayer},
@@ -162,6 +162,19 @@ class _MapScreenState extends ConsumerState<MapScreen> {
       ),
     );
   }
+
+  /// Fixed-width, non-wrapping label: on web the Georgian font loads after
+  /// first layout and mis-measured text otherwise renders squeezed/wrapped.
+  Widget _segmentLabel(String text) => SizedBox(
+        width: 64,
+        child: Text(
+          text,
+          textAlign: TextAlign.center,
+          maxLines: 1,
+          softWrap: false,
+          overflow: TextOverflow.visible,
+        ),
+      );
 
   void _showPointSheet(BuildContext context, LatLng point) {
     showModalBottomSheet<void>(
