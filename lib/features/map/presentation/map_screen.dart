@@ -127,6 +127,7 @@ class _MapScreenState extends ConsumerState<MapScreen> {
               child: Padding(
                 padding: const EdgeInsets.only(top: 8),
                 child: SegmentedButton<BaseLayer>(
+                  showSelectedIcon: false,
                   style: SegmentedButton.styleFrom(
                     backgroundColor:
                         Theme.of(context).colorScheme.surface.withValues(alpha: 0.9),
