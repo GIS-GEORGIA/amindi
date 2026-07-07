@@ -336,22 +336,25 @@ class _HourlyCell extends StatelessWidget {
     final precipitation = p.precipitation ?? 0;
     return Column(
       children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            if (p.condition != null) ...[
-              Icon(p.condition!.icon,
-                  size: 18, color: _conditionColor(p.condition!, theme)),
-              const SizedBox(width: 4),
-            ],
-            Text(
-              '${p.temperature!.round()}°',
-              style: theme.textTheme.bodyLarge?.copyWith(
-                fontWeight: FontWeight.w700,
-                fontSize: 17,
+        FittedBox(
+          fit: BoxFit.scaleDown,
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              if (p.condition != null) ...[
+                Icon(p.condition!.icon,
+                    size: 18, color: _conditionColor(p.condition!, theme)),
+                const SizedBox(width: 4),
+              ],
+              Text(
+                '${p.temperature!.round()}°',
+                style: theme.textTheme.bodyLarge?.copyWith(
+                  fontWeight: FontWeight.w700,
+                  fontSize: 17,
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
         const SizedBox(height: 2),
         Text(
@@ -388,31 +391,34 @@ class _DailyCell extends StatelessWidget {
     }
     return Column(
       children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.baseline,
-          textBaseline: TextBaseline.alphabetic,
-          children: [
-            if (s.condition != null) ...[
-              Icon(s.condition!.icon,
-                  size: 18, color: _conditionColor(s.condition!, theme)),
-              const SizedBox(width: 4),
+        FittedBox(
+          fit: BoxFit.scaleDown,
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.baseline,
+            textBaseline: TextBaseline.alphabetic,
+            children: [
+              if (s.condition != null) ...[
+                Icon(s.condition!.icon,
+                    size: 18, color: _conditionColor(s.condition!, theme)),
+                const SizedBox(width: 4),
+              ],
+              Text(
+                '${s.tempMax!.round()}°',
+                style: theme.textTheme.bodyLarge?.copyWith(
+                  fontWeight: FontWeight.w700,
+                  fontSize: 17,
+                ),
+              ),
+              Text(
+                ' ${s.tempMin!.round()}°',
+                style: theme.textTheme.bodyMedium?.copyWith(
+                  fontSize: 13,
+                  color: theme.colorScheme.onSurfaceVariant,
+                ),
+              ),
             ],
-            Text(
-              '${s.tempMax!.round()}°',
-              style: theme.textTheme.bodyLarge?.copyWith(
-                fontWeight: FontWeight.w700,
-                fontSize: 17,
-              ),
-            ),
-            Text(
-              ' ${s.tempMin!.round()}°',
-              style: theme.textTheme.bodyMedium?.copyWith(
-                fontSize: 13,
-                color: theme.colorScheme.onSurfaceVariant,
-              ),
-            ),
-          ],
+          ),
         ),
         if (s.precipitation > 0.05) ...[
           const SizedBox(height: 2),
