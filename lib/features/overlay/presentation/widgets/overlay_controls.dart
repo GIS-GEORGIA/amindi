@@ -25,6 +25,10 @@ class OverlayControls extends ConsumerWidget {
           PopupMenuButton<OverlayType>(
             tooltip: 'overlay.layers'.tr(),
             initialValue: type,
+            // Open upward so the menu never covers the slider card below
+            // or clips at the bottom screen edge.
+            position: PopupMenuPosition.over,
+            offset: const Offset(0, -170),
             onSelected: (t) => ref.read(overlayTypeProvider.notifier).set(t),
             itemBuilder: (context) => [
               for (final t in OverlayType.values)

@@ -165,6 +165,8 @@ class _MapScreenState extends ConsumerState<MapScreen> {
         initialChildSize: 0.6,
         minChildSize: 0.3,
         maxChildSize: 0.95,
+        snap: true,
+        snapSizes: const [0.6, 0.95],
         builder: (context, scrollController) => ComparisonPanel(
           lat: point.latitude,
           lon: point.longitude,
