@@ -131,6 +131,11 @@ class _MapScreenState extends ConsumerState<MapScreen> {
                   style: SegmentedButton.styleFrom(
                     backgroundColor:
                         Theme.of(context).colorScheme.surface.withValues(alpha: 0.9),
+                    // On web the Georgian font loads after first layout and
+                    // the segments get measured too narrow; a minimum size
+                    // keeps them full-width from the first frame.
+                    minimumSize: const Size(96, 40),
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
                   ),
                   segments: [
                     ButtonSegment(
