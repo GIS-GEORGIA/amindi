@@ -134,12 +134,10 @@ class _MapScreenState extends ConsumerState<MapScreen> {
                   segments: [
                     ButtonSegment(
                       value: BaseLayer.standard,
-                      icon: const Icon(Icons.map_outlined),
                       label: Text('map.layer_standard'.tr()),
                     ),
                     ButtonSegment(
                       value: BaseLayer.terrain,
-                      icon: const Icon(Icons.terrain),
                       label: Text('map.layer_terrain'.tr()),
                     ),
                   ],
