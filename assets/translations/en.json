@@ -11,6 +11,12 @@
     "failed": "Failed to load",
     "retry": "Retry"
   },
+  "overlay": {
+    "layers": "Layers",
+    "none": "Off",
+    "temperature": "Temperature",
+    "precipitation": "Precipitation"
+  },
   "models": {
     "res": {
       "ecmwf": "~9 km",

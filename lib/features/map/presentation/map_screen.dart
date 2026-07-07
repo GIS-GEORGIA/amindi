@@ -7,6 +7,9 @@ import 'package:latlong2/latlong.dart';
 import '../../../core/constants/map_constants.dart';
 import '../../forecast/presentation/widgets/comparison_panel.dart';
 import '../../model_info/presentation/model_info_screen.dart';
+import '../../overlay/domain/overlay_type.dart';
+import '../../overlay/presentation/providers/overlay_providers.dart';
+import '../../overlay/presentation/widgets/overlay_controls.dart';
 import '../../settings/presentation/settings_screen.dart';
 
 enum BaseLayer { standard, terrain }
@@ -23,6 +26,9 @@ class _MapScreenState extends ConsumerState<MapScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final overlayType = ref.watch(overlayTypeProvider);
+    final overlayTimeIndex = ref.watch(overlayTimeIndexProvider);
+
     return Scaffold(
       body: Stack(
         children: [
@@ -46,16 +52,42 @@ class _MapScreenState extends ConsumerState<MapScreen> {
                     : MapConstants.openTopoTileUrl,
                 userAgentPackageName: MapConstants.userAgentPackageName,
               ),
+              if (overlayType != OverlayType.none)
+                ref
+                    .watch(overlayImageProvider(
+                        (type: overlayType, timeIndex: overlayTimeIndex)))
+                    .maybeWhen(
+                      data: (png) => OverlayImageLayer(
+                        overlayImages: [
+                          OverlayImage(
+                            bounds: MapConstants.georgiaBounds,
+                            imageProvider: MemoryImage(png),
+                            gaplessPlayback: true,
+                          ),
+                        ],
+                      ),
+                      orElse: () => const SizedBox.shrink(),
+                    ),
               RichAttributionWidget(
+                alignment: AttributionAlignment.bottomLeft,
                 attributions: [
                   TextSourceAttribution(
                     _baseLayer == BaseLayer.standard
                         ? '© OpenStreetMap contributors'
                         : '© OpenTopoMap (CC-BY-SA) · © OpenStreetMap contributors',
                   ),
+                  if (overlayType != OverlayType.none)
+                    const TextSourceAttribution(
+                        'Weather: Open-Meteo · ICON-EU'),
                 ],
               ),
             ],
+          ),
+          const SafeArea(
+            child: Align(
+              alignment: Alignment.bottomRight,
+              child: OverlayControls(),
+            ),
           ),
           SafeArea(
             child: Align(

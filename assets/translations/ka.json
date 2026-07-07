@@ -11,6 +11,12 @@
     "failed": "ვერ ჩაიტვირთა",
     "retry": "თავიდან ცდა"
   },
+  "overlay": {
+    "layers": "ფენები",
+    "none": "გამორთული",
+    "temperature": "ტემპერატურა",
+    "precipitation": "ნალექი"
+  },
   "models": {
     "res": {
       "ecmwf": "~9 კმ",
