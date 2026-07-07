@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../domain/entities/forecast_point.dart';
+import '../../domain/entities/weather_condition.dart';
 import '../../domain/entities/weather_model.dart';
 import '../providers/forecast_providers.dart';
 
@@ -35,7 +36,7 @@ class _ComparisonPanelState extends ConsumerState<ComparisonPanel> {
 
     return Column(
       children: [
-        const SizedBox(height: 8),
+        const SizedBox(height: 10),
         Container(
           width: 36,
           height: 4,
@@ -44,13 +45,24 @@ class _ComparisonPanelState extends ConsumerState<ComparisonPanel> {
             borderRadius: BorderRadius.circular(2),
           ),
         ),
-        const SizedBox(height: 8),
-        Text(
-          '${widget.lat.toStringAsFixed(3)}, ${widget.lon.toStringAsFixed(3)}',
-          style: theme.textTheme.labelMedium,
+        const SizedBox(height: 10),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(Icons.place_outlined,
+                size: 16, color: theme.colorScheme.onSurfaceVariant),
+            const SizedBox(width: 4),
+            Text(
+              '${widget.lat.toStringAsFixed(3)}, '
+              '${widget.lon.toStringAsFixed(3)}',
+              style: theme.textTheme.titleSmall
+                  ?.copyWith(color: theme.colorScheme.onSurfaceVariant),
+            ),
+          ],
         ),
-        const SizedBox(height: 8),
+        const SizedBox(height: 10),
         SegmentedButton<bool>(
+          showSelectedIcon: false,
           segments: [
             ButtonSegment(value: false, label: Text('forecast.hourly'.tr())),
             ButtonSegment(value: true, label: Text('forecast.daily'.tr())),
@@ -58,7 +70,7 @@ class _ComparisonPanelState extends ConsumerState<ComparisonPanel> {
           selected: {_daily},
           onSelectionChanged: (s) => setState(() => _daily = s.first),
         ),
-        const SizedBox(height: 8),
+        const SizedBox(height: 10),
         Expanded(
           child: forecast.when(
             loading: () => const Center(child: CircularProgressIndicator()),
@@ -100,6 +112,17 @@ class _ErrorRetry extends StatelessWidget {
   }
 }
 
+Color _conditionColor(WeatherCondition condition, ThemeData theme) =>
+    switch (condition) {
+      WeatherCondition.clear || WeatherCondition.thunder =>
+        const Color(0xFFE8A400),
+      WeatherCondition.rain ||
+      WeatherCondition.sleet =>
+        const Color(0xFF2E86D6),
+      WeatherCondition.snow => const Color(0xFF64A8DC),
+      _ => theme.colorScheme.onSurfaceVariant,
+    };
+
 class _ForecastTable extends StatelessWidget {
   const _ForecastTable({
     required this.bundle,
@@ -111,20 +134,20 @@ class _ForecastTable extends StatelessWidget {
   final bool daily;
   final ScrollController? scrollController;
 
-  static const _timeColumnWidth = 64.0;
+  double get _timeColumnWidth => daily ? 76 : 56;
 
   @override
   Widget build(BuildContext context) {
-    final models = WeatherModel.values;
     final locale = context.locale.languageCode;
 
     return Column(
       children: [
-        _headerRow(context, models),
+        _headerRow(context),
         const Divider(height: 1),
         Expanded(
           child: ListView(
             controller: scrollController,
+            padding: const EdgeInsets.only(bottom: 16),
             children:
                 daily ? _dailyRows(context, locale) : _hourlyRows(context, locale),
           ),
@@ -133,20 +156,32 @@ class _ForecastTable extends StatelessWidget {
     );
   }
 
-  Widget _headerRow(BuildContext context, List<WeatherModel> models) {
+  Widget _headerRow(BuildContext context) {
     final theme = Theme.of(context);
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
       child: Row(
         children: [
-          const SizedBox(width: _timeColumnWidth),
-          for (final model in models)
+          SizedBox(width: _timeColumnWidth),
+          for (final model in WeatherModel.values)
             Expanded(
               child: Column(
                 children: [
-                  Text(model.label,
-                      style: theme.textTheme.labelLarge
-                          ?.copyWith(fontWeight: FontWeight.bold)),
+                  Text(
+                    model.label,
+                    style: theme.textTheme.titleSmall
+                        ?.copyWith(fontWeight: FontWeight.w800),
+                  ),
+                  const SizedBox(height: 3),
+                  Container(
+                    width: 30,
+                    height: 3,
+                    decoration: BoxDecoration(
+                      color: model.color,
+                      borderRadius: BorderRadius.circular(2),
+                    ),
+                  ),
+                  const SizedBox(height: 3),
                   Text(
                     bundle.errors.containsKey(model)
                         ? 'forecast.failed'.tr()
@@ -156,7 +191,8 @@ class _ForecastTable extends StatelessWidget {
                           ? theme.colorScheme.error
                           : theme.colorScheme.onSurfaceVariant,
                     ),
-                    textAlign: TextAlign.center,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
                   ),
                 ],
               ),
@@ -176,36 +212,70 @@ class _ForecastTable extends StatelessWidget {
         .where((t) => t.isAfter(now))
         .take(48)
         .toList();
-    final format = DateFormat('EEE HH:mm', locale);
+    final dayFormat = DateFormat('EEEE, d MMMM', locale);
+    final hourFormat = DateFormat('HH:mm', locale);
 
-    return [
-      for (final time in times)
-        _row(
-          context,
-          label: format.format(time),
-          cells: [
-            for (final model in WeatherModel.values)
-              _HourlyCell(point: bundle.forecasts[model]?.byTime[time]),
-          ],
+    final rows = <Widget>[];
+    DateTime? currentDay;
+    var zebra = 0;
+    for (final time in times) {
+      final day = DateTime(time.year, time.month, time.day);
+      if (day != currentDay) {
+        currentDay = day;
+        zebra = 0;
+        rows.add(_dayHeader(context, dayFormat.format(time)));
+      }
+      rows.add(_row(
+        context,
+        zebra: zebra.isOdd,
+        label: Text(
+          hourFormat.format(time),
+          style: Theme.of(context)
+              .textTheme
+              .titleSmall
+              ?.copyWith(fontWeight: FontWeight.w600),
         ),
-    ];
+        cells: [
+          for (final model in WeatherModel.values)
+            _HourlyCell(point: bundle.forecasts[model]?.byTime[time]),
+        ],
+      ));
+      zebra++;
+    }
+    return rows;
   }
 
   List<Widget> _dailyRows(BuildContext context, String locale) {
-    final dates = bundle.forecasts.values.first.daily
-        .map((d) => d.date)
-        .toList();
+    final theme = Theme.of(context);
+    final dates =
+        bundle.forecasts.values.first.daily.map((d) => d.date).toList();
     final byModelDate = {
       for (final entry in bundle.forecasts.entries)
         entry.key: {for (final d in entry.value.daily) d.date: d},
     };
-    final format = DateFormat('EEE d MMM', locale);
+    final weekdayFormat = DateFormat('EEE', locale);
+    final dateFormat = DateFormat('d MMM', locale);
 
     return [
-      for (final date in dates)
+      for (final (i, date) in dates.indexed)
         _row(
           context,
-          label: format.format(date),
+          zebra: i.isOdd,
+          label: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                weekdayFormat.format(date),
+                style: theme.textTheme.titleSmall
+                    ?.copyWith(fontWeight: FontWeight.w700),
+              ),
+              Text(
+                dateFormat.format(date),
+                style: theme.textTheme.labelSmall
+                    ?.copyWith(color: theme.colorScheme.onSurfaceVariant),
+              ),
+            ],
+          ),
           cells: [
             for (final model in WeatherModel.values)
               _DailyCell(summary: byModelDate[model]?[date]),
@@ -214,23 +284,33 @@ class _ForecastTable extends StatelessWidget {
     ];
   }
 
-  Widget _row(BuildContext context,
-      {required String label, required List<Widget> cells}) {
+  Widget _dayHeader(BuildContext context, String label) {
+    final theme = Theme.of(context);
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
-      decoration: BoxDecoration(
-        border: Border(
-          bottom: BorderSide(
-            color: Theme.of(context).colorScheme.outlineVariant.withValues(alpha: 0.4),
-          ),
-        ),
+      width: double.infinity,
+      color: theme.colorScheme.surfaceContainerHigh,
+      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 5),
+      child: Text(
+        label,
+        style: theme.textTheme.labelMedium
+            ?.copyWith(fontWeight: FontWeight.w700),
       ),
+    );
+  }
+
+  Widget _row(BuildContext context,
+      {required bool zebra,
+      required Widget label,
+      required List<Widget> cells}) {
+    final theme = Theme.of(context);
+    return Container(
+      color: zebra
+          ? theme.colorScheme.surfaceContainerLow.withValues(alpha: 0.6)
+          : null,
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 9),
       child: Row(
         children: [
-          SizedBox(
-            width: _timeColumnWidth,
-            child: Text(label, style: Theme.of(context).textTheme.labelSmall),
-          ),
+          SizedBox(width: _timeColumnWidth, child: label),
           for (final cell in cells) Expanded(child: cell),
         ],
       ),
@@ -248,7 +328,10 @@ class _HourlyCell extends StatelessWidget {
     final theme = Theme.of(context);
     final p = point;
     if (p == null || p.temperature == null) {
-      return const Center(child: Text('—'));
+      return Center(
+        child: Text('—',
+            style: TextStyle(color: theme.colorScheme.outlineVariant)),
+      );
     }
     final precipitation = p.precipitation ?? 0;
     return Column(
@@ -258,21 +341,28 @@ class _HourlyCell extends StatelessWidget {
           children: [
             if (p.condition != null) ...[
               Icon(p.condition!.icon,
-                  size: 14, color: theme.colorScheme.onSurfaceVariant),
-              const SizedBox(width: 3),
+                  size: 18, color: _conditionColor(p.condition!, theme)),
+              const SizedBox(width: 4),
             ],
-            Text('${p.temperature!.round()}°',
-                style: theme.textTheme.bodyMedium
-                    ?.copyWith(fontWeight: FontWeight.w600)),
+            Text(
+              '${p.temperature!.round()}°',
+              style: theme.textTheme.bodyLarge?.copyWith(
+                fontWeight: FontWeight.w700,
+                fontSize: 17,
+              ),
+            ),
           ],
         ),
+        const SizedBox(height: 2),
         Text(
           precipitation > 0
               ? '${precipitation.toStringAsFixed(1)} mm'
               : '${(p.windSpeed ?? 0).toStringAsFixed(1)} m/s',
-          style: theme.textTheme.labelSmall?.copyWith(
+          style: theme.textTheme.bodySmall?.copyWith(
+            fontSize: 12,
+            fontWeight: FontWeight.w500,
             color: precipitation > 0
-                ? theme.colorScheme.primary
+                ? const Color(0xFF2E86D6)
                 : theme.colorScheme.onSurfaceVariant,
           ),
         ),
@@ -291,31 +381,50 @@ class _DailyCell extends StatelessWidget {
     final theme = Theme.of(context);
     final s = summary;
     if (s == null || s.tempMax == null) {
-      return const Center(child: Text('—'));
+      return Center(
+        child: Text('—',
+            style: TextStyle(color: theme.colorScheme.outlineVariant)),
+      );
     }
     return Column(
       children: [
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.baseline,
+          textBaseline: TextBaseline.alphabetic,
           children: [
             if (s.condition != null) ...[
               Icon(s.condition!.icon,
-                  size: 14, color: theme.colorScheme.onSurfaceVariant),
-              const SizedBox(width: 3),
+                  size: 18, color: _conditionColor(s.condition!, theme)),
+              const SizedBox(width: 4),
             ],
             Text(
-              '${s.tempMax!.round()}°/${s.tempMin!.round()}°',
-              style: theme.textTheme.bodyMedium
-                  ?.copyWith(fontWeight: FontWeight.w600),
+              '${s.tempMax!.round()}°',
+              style: theme.textTheme.bodyLarge?.copyWith(
+                fontWeight: FontWeight.w700,
+                fontSize: 17,
+              ),
+            ),
+            Text(
+              ' ${s.tempMin!.round()}°',
+              style: theme.textTheme.bodyMedium?.copyWith(
+                fontSize: 13,
+                color: theme.colorScheme.onSurfaceVariant,
+              ),
             ),
           ],
         ),
-        if (s.precipitation > 0.05)
+        if (s.precipitation > 0.05) ...[
+          const SizedBox(height: 2),
           Text(
             '${s.precipitation.toStringAsFixed(1)} mm',
-            style: theme.textTheme.labelSmall
-                ?.copyWith(color: theme.colorScheme.primary),
+            style: theme.textTheme.bodySmall?.copyWith(
+              fontSize: 12,
+              fontWeight: FontWeight.w500,
+              color: const Color(0xFF2E86D6),
+            ),
           ),
+        ],
       ],
     );
   }
