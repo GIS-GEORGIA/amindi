@@ -2,7 +2,7 @@
   "app_title": "ამინდი",
   "map": {
     "layer_standard": "რუკა",
-    "layer_terrain": "რელიეფი",
+    "layer_terrain": "ტოპო",
     "selected_point": "არჩეული წერტილი"
   },
   "forecast": {
@@ -22,7 +22,7 @@
       "ecmwf": "~9 კმ",
       "icon_eu": "~6.5 კმ",
       "gfs": "~13 კმ",
-      "yr": "წერტილოვანი"
+      "yr": "წერტილი"
     }
   },
   "model_info": {
