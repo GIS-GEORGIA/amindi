@@ -1,7 +1,7 @@
 {
   "app_title": "ამინდი",
   "map": {
-    "layer_standard": "სტანდარტული",
+    "layer_standard": "რუკა",
     "layer_terrain": "რელიეფი",
     "selected_point": "არჩეული წერტილი"
   },
