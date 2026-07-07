@@ -19,6 +19,50 @@
       "yr": "point"
     }
   },
+  "model_info": {
+    "title": "About the models",
+    "intro": "A weather forecast is a model computation, not a fact. Over Georgia's complex terrain different models often disagree about the very same point. When all four say the same thing, the forecast is trustworthy; when they diverge, be skeptical and check the latest run.",
+    "section": {
+      "provider": "Provider",
+      "resolution": "Resolution",
+      "updates": "Updates",
+      "strengths": "Strengths",
+      "limits": "Limitations",
+      "georgia": "Over Georgia"
+    },
+    "ecmwf": {
+      "provider": "European Centre for Medium-Range Weather Forecasts (ECMWF), UK.",
+      "resolution": "Native grid ~9 km; open data via Open-Meteo comes on a 0.25° grid (~25 km).",
+      "updates": "2 main runs per day (00 and 12 UTC), horizon ~10 days.",
+      "strengths": "Widely regarded as the most accurate global model — it has led verification scores in the 3–10 day range for years. Excellent at large-scale dynamics: fronts, Black Sea cyclones, temperature waves.",
+      "limits": "The global grid smooths the Caucasus — local valley and mountain effects (foehn, temperature inversions, narrow-valley rain) get averaged away.",
+      "georgia": "A reliable base for the big picture: when a front arrives, where temperature is heading. Exact precipitation placement in the mountains is less trustworthy — compare with a high-resolution model there."
+    },
+    "icon_eu": {
+      "provider": "German Weather Service (DWD).",
+      "resolution": "~6.5 km — the highest of the four.",
+      "updates": "4 times per day (00/06/12/18 UTC), horizon ~5 days.",
+      "strengths": "High resolution pays off over complex terrain: precipitation placement, mountain–valley contrasts and convective (afternoon) showers come out better than in global models.",
+      "limits": "Short horizon (~120 hours). Georgia sits near the eastern edge of its European domain, and quality degrades slightly near the edge.",
+      "georgia": "Often the best pick for a detailed 2–4 day forecast, especially in mountain regions — Svaneti, Kazbegi, Tusheti."
+    },
+    "gfs": {
+      "provider": "NOAA / NCEP, USA.",
+      "resolution": "~13 km (global).",
+      "updates": "4 times per day, horizon up to 16 days — the longest.",
+      "strengths": "Frequent updates and a long horizon make it good for spotting trends. The data is fully open and free, which is why most weather apps worldwide run on it.",
+      "limits": "Usually trails ECMWF in verification. Over complex terrain it tends to overdo or misplace precipitation; valley temperatures are less accurate.",
+      "georgia": "Use it as a third opinion and for the beyond-7-days trend (warming or cooling), not for the details of a specific day."
+    },
+    "yr": {
+      "provider": "Norwegian Meteorological Institute (MET Norway, yr.no).",
+      "resolution": "Point-based — not a separate model but a post-processed forecast.",
+      "updates": "Hourly steps for ~2.5 days, then 6-hour steps to ~9 days.",
+      "strengths": "Applies its own post-processing on top of ECMWF: corrects temperature to the point's real altitude and blends in local statistics. A ready, polished answer for a specific place.",
+      "limits": "A black box — you can't see what the correction changed. Precipitation distribution in the mountains still rests on a global basis.",
+      "georgia": "A strong independent reference. Its temperature in mountainous places is often the most accurate thanks to the altitude correction."
+    }
+  },
   "settings": {
     "title": "Settings",
     "language": "Language",

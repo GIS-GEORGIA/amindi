@@ -6,6 +6,7 @@ import 'package:latlong2/latlong.dart';
 
 import '../../../core/constants/map_constants.dart';
 import '../../forecast/presentation/widgets/comparison_panel.dart';
+import '../../model_info/presentation/model_info_screen.dart';
 import '../../settings/presentation/settings_screen.dart';
 
 enum BaseLayer { standard, terrain }
@@ -61,14 +62,29 @@ class _MapScreenState extends ConsumerState<MapScreen> {
               alignment: Alignment.topRight,
               child: Padding(
                 padding: const EdgeInsets.only(top: 8, right: 8),
-                child: IconButton.filledTonal(
-                  icon: const Icon(Icons.settings_outlined),
-                  tooltip: 'settings.title'.tr(),
-                  onPressed: () => Navigator.of(context).push(
-                    MaterialPageRoute<void>(
-                      builder: (_) => const SettingsScreen(),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    IconButton.filledTonal(
+                      icon: const Icon(Icons.settings_outlined),
+                      tooltip: 'settings.title'.tr(),
+                      onPressed: () => Navigator.of(context).push(
+                        MaterialPageRoute<void>(
+                          builder: (_) => const SettingsScreen(),
+                        ),
+                      ),
                     ),
-                  ),
+                    const SizedBox(height: 4),
+                    IconButton.filledTonal(
+                      icon: const Icon(Icons.info_outline),
+                      tooltip: 'model_info.title'.tr(),
+                      onPressed: () => Navigator.of(context).push(
+                        MaterialPageRoute<void>(
+                          builder: (_) => const ModelInfoScreen(),
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               ),
             ),
