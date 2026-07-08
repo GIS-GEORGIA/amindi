@@ -76,6 +76,8 @@
     "theme_light": "Light",
     "theme_dark": "Dark",
     "theme_system": "System",
-    "map_opacity": "Base map opacity"
+    "map_opacity": "Base map opacity",
+    "source_code": "Source code",
+    "link_failed": "Could not open the link"
   }
 }

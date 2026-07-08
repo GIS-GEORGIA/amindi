@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../map/presentation/providers/base_map_opacity_provider.dart';
 import 'providers/theme_mode_provider.dart';
+import 'widgets/github_link_tile.dart';
 
 class SettingsScreen extends ConsumerWidget {
   const SettingsScreen({super.key});
@@ -85,6 +86,8 @@ class SettingsScreen extends ConsumerWidget {
               ),
             ],
           ),
+          const SizedBox(height: 32),
+          const GithubLinkTile(),
         ],
       ),
     );
