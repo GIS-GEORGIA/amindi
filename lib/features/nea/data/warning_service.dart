@@ -128,9 +128,7 @@ class WarningService {
     for (final el in candidates) {
       final t = el.text.trim();
       if (t.isEmpty) continue;
-      // გამოვრიცხოთ ნავიგაცია/სათაურები.
-      if (t == 'გაფრთხილება' || t == '#გაფრთხილება!') continue;
-      if (t.length < 4) continue;
+      if (_isNoise(t)) continue;
       if (seen.add(t)) out.add(t);
     }
 
@@ -138,13 +136,21 @@ class WarningService {
     if (out.isEmpty) {
       for (final line in container.text.split('\n')) {
         final t = line.trim();
-        if (t.length >= 4 && !t.contains('გაფრთხილება') && seen.add(t)) {
-          out.add(t);
-        }
+        if (!_isNoise(t) && seen.add(t)) out.add(t);
       }
     }
 
     return out;
+  }
+
+  /// სათაურები, დონის ლეიბლები და ახსნები — ეს ცალკეული გაფრთხილება არაა.
+  /// დონე ისედაც [WarningLevel]-შია, ბანერზე ჩიპად ჩანს.
+  bool _isNoise(String t) {
+    if (t.length < 4) return true;
+    if (t == 'გაფრთხილება' || t == '#გაფრთხილება!') return true;
+    if (t.startsWith('საფრთხის დონე')) return true;
+    if (t.contains('მაფრთხილებელი ნიშნების')) return true;
+    return false;
   }
 
   void dispose() => _client.close();
