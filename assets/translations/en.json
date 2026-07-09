@@ -11,6 +11,10 @@
     "failed": "Failed to load",
     "retry": "Retry"
   },
+  "cities": {
+    "search": "Search a city",
+    "no_results": "No city found"
+  },
   "warning": {
     "title": "Weather warning",
     "level": "Hazard level: {}",
@@ -32,6 +36,7 @@
   },
   "model_info": {
     "title": "About the models",
+    "official_title": "Official forecast — meteo.gov.ge",
     "intro": "A weather forecast is a model computation, not a fact. Over Georgia's complex terrain different models often disagree about the very same point. When all four say the same thing, the forecast is trustworthy; when they diverge, be skeptical and check the latest run.",
     "section": {
       "provider": "Provider",

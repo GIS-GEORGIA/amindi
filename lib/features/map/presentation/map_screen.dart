@@ -5,6 +5,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:latlong2/latlong.dart';
 
 import '../../../core/constants/map_constants.dart';
+import '../../cities/presentation/city_search_delegate.dart';
+import '../../cities/domain/georgian_city.dart';
 import '../../forecast/presentation/widgets/comparison_panel.dart';
 import '../../model_info/presentation/model_info_screen.dart';
 import '../../nea/presentation/providers/nea_providers.dart';
@@ -26,6 +28,25 @@ class MapScreen extends ConsumerStatefulWidget {
 
 class _MapScreenState extends ConsumerState<MapScreen> {
   BaseLayer _baseLayer = BaseLayer.standard;
+  final MapController _mapController = MapController();
+  GeorgianCity? _selectedCity;
+
+  @override
+  void dispose() {
+    _mapController.dispose();
+    super.dispose();
+  }
+
+  Future<void> _openCitySearch() async {
+    final city = await showSearch<GeorgianCity?>(
+      context: context,
+      delegate: CitySearchDelegate(context.locale.languageCode),
+    );
+    if (city == null || !mounted) return;
+    setState(() => _selectedCity = city);
+    _mapController.move(city.location, 10);
+    _showPointSheet(context, city.location);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -40,6 +61,7 @@ class _MapScreenState extends ConsumerState<MapScreen> {
       body: Stack(
         children: [
           FlutterMap(
+            mapController: _mapController,
             options: MapOptions(
               initialCenter: MapConstants.georgiaCenter,
               initialZoom: MapConstants.initialZoom,
@@ -78,6 +100,42 @@ class _MapScreenState extends ConsumerState<MapScreen> {
                       ),
                       orElse: () => const SizedBox.shrink(),
                     ),
+              if (_selectedCity != null)
+                MarkerLayer(
+                  markers: [
+                    Marker(
+                      point: _selectedCity!.location,
+                      width: 160,
+                      height: 58,
+                      alignment: Alignment.topCenter,
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(Icons.location_on,
+                              color: Theme.of(context).colorScheme.error,
+                              size: 34),
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 6, vertical: 1),
+                            decoration: BoxDecoration(
+                              color: Theme.of(context)
+                                  .colorScheme
+                                  .surface
+                                  .withValues(alpha: 0.9),
+                              borderRadius: BorderRadius.circular(4),
+                            ),
+                            child: Text(
+                              context.locale.languageCode == 'en'
+                                  ? _selectedCity!.nameEn
+                                  : _selectedCity!.name,
+                              style: Theme.of(context).textTheme.labelSmall,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
               RichAttributionWidget(
                 alignment: AttributionAlignment.bottomLeft,
                 attributions: [
@@ -160,6 +218,20 @@ class _MapScreenState extends ConsumerState<MapScreen> {
                   selected: {_baseLayer},
                   onSelectionChanged: (selection) =>
                       setState(() => _baseLayer = selection.first),
+                ),
+              ),
+            ),
+          ),
+          SafeArea(
+            child: Align(
+              alignment: Alignment.topLeft,
+              child: Padding(
+                padding: EdgeInsets.only(top: 8 + topInset, left: 8),
+                child: FloatingActionButton.small(
+                  heroTag: 'citySearch',
+                  tooltip: 'cities.search'.tr(),
+                  onPressed: _openCitySearch,
+                  child: const Icon(Icons.search),
                 ),
               ),
             ),

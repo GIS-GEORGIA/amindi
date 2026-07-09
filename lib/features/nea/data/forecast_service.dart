@@ -183,36 +183,32 @@ class ForecastService {
       if (t.contains('პროგნოზ') && t.length > title.length) title = t;
     }
 
-    // ტექსტი: ვცდილობთ ვიპოვოთ ძირითადი კონტენტის კონტეინერი. საიტს არა აქვს
-    // სუფთა semantic markup, ამიტომ ვკრებთ <p> ელემენტებს, რომლებიც შინაარსობრივ
-    // ტექსტს შეიცავს (ტემპერატურა/ნალექი/რაიონი) და ვფილტრავთ ნავიგაციას.
+    // კონტენტის კონტეინერზე დავამიზნოთ — meteo.gov.ge იყენებს
+    // `section#content.innerContent`-ს / `.leftContent`-ს — რომ ნავიგაცია
+    // და footer არ მოვიდეს. fallback-ად მთელი დოკუმენტი.
+    final scope = doc.querySelector('#content') ??
+        doc.querySelector('.innerContent') ??
+        doc.querySelector('.leftContent') ??
+        doc.body ??
+        doc.documentElement!;
+
+    // ჯერ <p> ელემენტები (თუ არსებობს), თორემ scope-ის ტექსტი ხაზებად.
     final paras = <String>[];
     final seen = <String>{};
-    for (final p in doc.querySelectorAll('p')) {
-      final t = p.text.trim();
-      if (t.length < 20) continue; // მოკლე = სავარაუდოდ ნავიგაცია/ლეიბლი
-      if (_isNav(t)) continue;
+    for (final p in scope.querySelectorAll('p')) {
+      final t = _clean(p.text);
+      if (t.length < 20 || _isNav(t)) continue;
       if (seen.add(t)) paras.add(t);
     }
-
-    // fallback: თუ <p>-ებით ვერაფერი მოვიპოვეთ, ავიღოთ ყველაზე დიდი
-    // ტექსტიანი <div> და მისი ტექსტი.
-    String body;
-    if (paras.length >= 2) {
-      body = paras.join('\n\n');
-    } else {
-      dom.Element? biggest;
-      int max = 0;
-      for (final div in doc.querySelectorAll('div')) {
-        final len = div.text.trim().length;
-        if (len > max && div.querySelectorAll('div').length < 3) {
-          max = len;
-          biggest = div;
-        }
+    if (paras.isEmpty) {
+      for (final line in _clean(scope.text).split('\n')) {
+        final t = line.trim();
+        if (t.length < 20 || _isNav(t)) continue;
+        if (seen.add(t)) paras.add(t);
       }
-      body = biggest?.text.trim() ?? '';
     }
 
+    final body = paras.join('\n\n');
     if (body.trim().isEmpty) return null;
 
     return LongRangeForecast(
@@ -222,6 +218,10 @@ class ForecastService {
       fetchedAt: DateTime.now(),
     );
   }
+
+  /// ზედმეტი whitespace-ისა და non-breaking space-ების გაწმენდა.
+  String _clean(String t) =>
+      t.replaceAll(' ', ' ').replaceAll(RegExp(r'[ \t]+'), ' ').trim();
 
   bool _isNav(String t) {
     const navMarkers = [

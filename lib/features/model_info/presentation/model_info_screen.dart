@@ -1,16 +1,18 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../forecast/domain/entities/weather_model.dart';
+import '../../nea/presentation/widgets/official_forecast_section.dart';
 
-class ModelInfoScreen extends StatefulWidget {
+class ModelInfoScreen extends ConsumerStatefulWidget {
   const ModelInfoScreen({super.key});
 
   @override
-  State<ModelInfoScreen> createState() => _ModelInfoScreenState();
+  ConsumerState<ModelInfoScreen> createState() => _ModelInfoScreenState();
 }
 
-class _ModelInfoScreenState extends State<ModelInfoScreen> {
+class _ModelInfoScreenState extends ConsumerState<ModelInfoScreen> {
   WeatherModel _selected = WeatherModel.ecmwf;
 
   static const _sections = [
@@ -72,6 +74,8 @@ class _ModelInfoScreenState extends State<ModelInfoScreen> {
               ),
             ),
           ),
+          const SizedBox(height: 16),
+          const OfficialForecastSection(),
         ],
       ),
     );
