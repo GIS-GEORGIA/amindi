@@ -3,16 +3,18 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../data/forecast_service.dart';
 import '../../data/models/forecasts.dart';
 import '../../data/models/weather_warning.dart';
+import '../../data/nea_endpoints.dart';
 import '../../data/warning_service.dart';
 
 final warningServiceProvider = Provider<WarningService>((ref) {
-  final service = WarningService();
+  // Web goes through the CORS proxy; native hits meteo.gov.ge directly.
+  final service = WarningService(sourceUrl: '$neaBaseUrl/natural-disaster');
   ref.onDispose(service.dispose);
   return service;
 });
 
 final forecastServiceProvider = Provider<ForecastService>((ref) {
-  final service = ForecastService();
+  final service = ForecastService(baseUrl: neaBaseUrl);
   ref.onDispose(service.dispose);
   return service;
 });

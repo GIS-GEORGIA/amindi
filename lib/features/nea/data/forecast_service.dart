@@ -162,7 +162,10 @@ class ForecastService {
       final matches = href.contains(pathPrefix) &&
           RegExp(RegExp.escape(pathPrefix) + r'\d+$').hasMatch(href);
       if (matches) {
-        return href.startsWith('http') ? href : '$baseUrl$href';
+        // Normalize to our configured base (direct or proxy) so the second
+        // hop uses the same origin as the first.
+        final path = href.replaceFirst(RegExp(r'^https?://[^/]+'), '');
+        return '$baseUrl$path';
       }
     }
     return null;

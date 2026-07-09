@@ -1,0 +1,9 @@
+name = "amindi-meteo-proxy"
+main = "src/index.js"
+compatibility_date = "2025-06-01"
+
+# Serve the Worker from a stable custom domain on the qgis.ge zone.
+# wrangler creates/points the DNS record automatically on deploy.
+routes = [
+  { pattern = "meteo-proxy.qgis.ge", custom_domain = true }
+]
