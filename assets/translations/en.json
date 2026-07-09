@@ -11,6 +11,11 @@
     "failed": "Failed to load",
     "retry": "Retry"
   },
+  "warning": {
+    "title": "Weather warning",
+    "level": "Hazard level: {}",
+    "source": "Source: meteo.gov.ge"
+  },
   "overlay": {
     "layers": "Layers",
     "none": "Off",

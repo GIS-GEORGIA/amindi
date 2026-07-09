@@ -7,6 +7,8 @@ import 'package:latlong2/latlong.dart';
 import '../../../core/constants/map_constants.dart';
 import '../../forecast/presentation/widgets/comparison_panel.dart';
 import '../../model_info/presentation/model_info_screen.dart';
+import '../../nea/presentation/providers/nea_providers.dart';
+import '../../nea/presentation/widgets/warning_banner.dart';
 import '../../overlay/domain/overlay_type.dart';
 import '../../overlay/presentation/providers/overlay_providers.dart';
 import '../../overlay/presentation/widgets/overlay_controls.dart';
@@ -29,6 +31,10 @@ class _MapScreenState extends ConsumerState<MapScreen> {
   Widget build(BuildContext context) {
     final overlayType = ref.watch(overlayTypeProvider);
     final overlayTimeIndex = ref.watch(overlayTimeIndexProvider);
+
+    // When an official warning banner is shown, push the top controls below it.
+    final warning = ref.watch(warningProvider).value;
+    final topInset = (warning != null && !warning.isEmpty) ? 44.0 : 0.0;
 
     return Scaffold(
       body: Stack(
@@ -97,7 +103,7 @@ class _MapScreenState extends ConsumerState<MapScreen> {
             child: Align(
               alignment: Alignment.topRight,
               child: Padding(
-                padding: const EdgeInsets.only(top: 8, right: 8),
+                padding: EdgeInsets.only(top: 8 + topInset, right: 8),
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
@@ -129,7 +135,7 @@ class _MapScreenState extends ConsumerState<MapScreen> {
             child: Align(
               alignment: Alignment.topCenter,
               child: Padding(
-                padding: const EdgeInsets.only(top: 8),
+                padding: EdgeInsets.only(top: 8 + topInset),
                 child: SegmentedButton<BaseLayer>(
                   showSelectedIcon: false,
                   style: SegmentedButton.styleFrom(
@@ -157,6 +163,14 @@ class _MapScreenState extends ConsumerState<MapScreen> {
                 ),
               ),
             ),
+          ),
+          // Official NEA hazard warning, pinned to the very top (topmost so it
+          // spans full width above the controls). Renders nothing when none.
+          const Positioned(
+            top: 0,
+            left: 0,
+            right: 0,
+            child: SafeArea(bottom: false, child: WarningBanner()),
           ),
         ],
       ),
