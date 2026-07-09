@@ -53,14 +53,12 @@ class _MapScreenState extends ConsumerState<MapScreen> {
     final overlayType = ref.watch(overlayTypeProvider);
     final overlayTimeIndex = ref.watch(overlayTimeIndexProvider);
 
-    // When an official warning banner is shown, push the top controls below it
-    // by exactly the banner's fixed height (plus a small gap).
+    // The official warning banner sits in normal layout above the map (see
+    // below), so it grows to fit its text and never overlaps the controls.
     final warning = ref.watch(warningProvider).value;
-    final topInset =
-        (warning != null && !warning.isEmpty) ? WarningBanner.height + 4 : 0.0;
+    final hasWarning = warning != null && !warning.isEmpty;
 
-    return Scaffold(
-      body: Stack(
+    final mapStack = Stack(
         children: [
           FlutterMap(
             mapController: _mapController,
@@ -163,7 +161,7 @@ class _MapScreenState extends ConsumerState<MapScreen> {
             child: Align(
               alignment: Alignment.topRight,
               child: Padding(
-                padding: EdgeInsets.only(top: 8 + topInset, right: 8),
+                padding: const EdgeInsets.only(top: 8, right: 8),
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
@@ -195,7 +193,7 @@ class _MapScreenState extends ConsumerState<MapScreen> {
             child: Align(
               alignment: Alignment.topCenter,
               child: Padding(
-                padding: EdgeInsets.only(top: 8 + topInset),
+                padding: const EdgeInsets.only(top: 8),
                 child: SegmentedButton<BaseLayer>(
                   showSelectedIcon: false,
                   style: SegmentedButton.styleFrom(
@@ -228,7 +226,7 @@ class _MapScreenState extends ConsumerState<MapScreen> {
             child: Align(
               alignment: Alignment.topLeft,
               child: Padding(
-                padding: EdgeInsets.only(top: 8 + topInset, left: 8),
+                padding: const EdgeInsets.only(top: 8, left: 8),
                 child: FloatingActionButton.small(
                   heroTag: 'citySearch',
                   tooltip: 'cities.search'.tr(),
@@ -238,13 +236,24 @@ class _MapScreenState extends ConsumerState<MapScreen> {
               ),
             ),
           ),
-          // Official NEA hazard warning, pinned to the very top (topmost so it
-          // spans full width above the controls). Renders nothing when none.
-          const Positioned(
-            top: 0,
-            left: 0,
-            right: 0,
-            child: SafeArea(bottom: false, child: WarningBanner()),
+        ],
+      );
+
+    return Scaffold(
+      body: Column(
+        children: [
+          // Banner in normal layout so it grows to fit (up to 3 lines) and
+          // pushes the map down instead of overlapping the controls. When it
+          // consumes the top safe area, remove it for the map below so the
+          // controls' own SafeArea doesn't double-count it.
+          if (hasWarning)
+            const SafeArea(bottom: false, child: WarningBanner()),
+          Expanded(
+            child: MediaQuery.removePadding(
+              context: context,
+              removeTop: hasWarning,
+              child: mapStack,
+            ),
           ),
         ],
       ),

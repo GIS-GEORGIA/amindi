@@ -14,10 +14,6 @@ const _sourceUrl = 'https://meteo.gov.ge/natural-disaster';
 class WarningBanner extends ConsumerWidget {
   const WarningBanner({super.key});
 
-  /// Fixed content height of the strip; the map screen reserves this much
-  /// top inset for its controls when a warning is shown.
-  static const double height = 52;
-
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final warning = ref.watch(warningProvider).value;
@@ -27,41 +23,41 @@ class WarningBanner extends ConsumerWidget {
       return const SizedBox.shrink();
     }
 
-    // Fixed height so the map screen can reserve a matching top inset for its
-    // controls without overlap or a gap, whether the message is one or two
-    // lines. The hazard level is conveyed by [color] (and shown in the sheet),
-    // so it no longer competes for space on the strip.
-    final message =
-        warning.messages.isNotEmpty ? warning.messages.first : 'warning.title'.tr();
+    // Content-sized (not fixed height): the strip grows to fit the message,
+    // up to three lines, so it can never be cramped. The hazard level is
+    // conveyed by [color] (and shown in the sheet), so it doesn't compete for
+    // horizontal space. Placed in normal layout above the map by the map
+    // screen, so there is no overlap to reserve space for.
+    final message = warning.messages.isNotEmpty
+        ? warning.messages.first
+        : 'warning.title'.tr();
     return Material(
       color: warning.level.color,
       child: InkWell(
         onTap: () => _showDetails(context, warning),
-        child: SizedBox(
-          height: WarningBanner.height,
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 12),
-            child: Row(
-              children: [
-                const Icon(Icons.warning_amber_rounded,
-                    color: Colors.white, size: 22),
-                const SizedBox(width: 10),
-                Expanded(
-                  child: Text(
-                    message,
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontWeight: FontWeight.w600,
-                      height: 1.15,
-                    ),
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              const Icon(Icons.warning_amber_rounded,
+                  color: Colors.white, size: 22),
+              const SizedBox(width: 10),
+              Expanded(
+                child: Text(
+                  message,
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.w600,
+                    height: 1.2,
                   ),
+                  maxLines: 3,
+                  overflow: TextOverflow.ellipsis,
                 ),
-                const SizedBox(width: 6),
-                const Icon(Icons.chevron_right, color: Colors.white, size: 20),
-              ],
-            ),
+              ),
+              const SizedBox(width: 6),
+              const Icon(Icons.chevron_right, color: Colors.white, size: 20),
+            ],
           ),
         ),
       ),
