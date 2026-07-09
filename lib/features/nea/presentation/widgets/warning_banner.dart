@@ -14,6 +14,10 @@ const _sourceUrl = 'https://meteo.gov.ge/natural-disaster';
 class WarningBanner extends ConsumerWidget {
   const WarningBanner({super.key});
 
+  /// Fixed content height of the strip; the map screen reserves this much
+  /// top inset for its controls when a warning is shown.
+  static const double height = 52;
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final warning = ref.watch(warningProvider).value;
@@ -23,38 +27,41 @@ class WarningBanner extends ConsumerWidget {
       return const SizedBox.shrink();
     }
 
-    final color = warning.level.color;
+    // Fixed height so the map screen can reserve a matching top inset for its
+    // controls without overlap or a gap, whether the message is one or two
+    // lines. The hazard level is conveyed by [color] (and shown in the sheet),
+    // so it no longer competes for space on the strip.
+    final message =
+        warning.messages.isNotEmpty ? warning.messages.first : 'warning.title'.tr();
     return Material(
-      color: color,
+      color: warning.level.color,
       child: InkWell(
         onTap: () => _showDetails(context, warning),
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-          child: Row(
-            children: [
-              const Icon(Icons.warning_amber_rounded,
-                  color: Colors.white, size: 20),
-              const SizedBox(width: 8),
-              Expanded(
-                child: Text(
-                  warning.messages.isNotEmpty
-                      ? warning.messages.first
-                      : 'warning.title'.tr(),
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontWeight: FontWeight.w600,
+        child: SizedBox(
+          height: WarningBanner.height,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 12),
+            child: Row(
+              children: [
+                const Icon(Icons.warning_amber_rounded,
+                    color: Colors.white, size: 22),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: Text(
+                    message,
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.w600,
+                      height: 1.15,
+                    ),
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
                   ),
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
                 ),
-              ),
-              const SizedBox(width: 8),
-              Text(
-                'warning.level'.tr(args: [warning.level.label]),
-                style: const TextStyle(color: Colors.white, fontSize: 12),
-              ),
-              const Icon(Icons.chevron_right, color: Colors.white, size: 18),
-            ],
+                const SizedBox(width: 6),
+                const Icon(Icons.chevron_right, color: Colors.white, size: 20),
+              ],
+            ),
           ),
         ),
       ),

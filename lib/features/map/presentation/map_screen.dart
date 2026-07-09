@@ -53,9 +53,11 @@ class _MapScreenState extends ConsumerState<MapScreen> {
     final overlayType = ref.watch(overlayTypeProvider);
     final overlayTimeIndex = ref.watch(overlayTimeIndexProvider);
 
-    // When an official warning banner is shown, push the top controls below it.
+    // When an official warning banner is shown, push the top controls below it
+    // by exactly the banner's fixed height (plus a small gap).
     final warning = ref.watch(warningProvider).value;
-    final topInset = (warning != null && !warning.isEmpty) ? 44.0 : 0.0;
+    final topInset =
+        (warning != null && !warning.isEmpty) ? WarningBanner.height + 4 : 0.0;
 
     return Scaffold(
       body: Stack(
