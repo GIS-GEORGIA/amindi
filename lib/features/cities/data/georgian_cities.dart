@@ -81,4 +81,16 @@ const List<GeorgianCity> georgianCities = [
   GeorgianCity(name: 'ამბროლაური', nameEn: 'Ambrolauri', region: 'რაჭა-ლეჩხუმი', lat: 42.5216, lon: 43.1503),
   GeorgianCity(name: 'ონი', nameEn: 'Oni', region: 'რაჭა-ლეჩხუმი', lat: 42.5794, lon: 43.4419),
   GeorgianCity(name: 'ცაგერი', nameEn: 'Tsageri', region: 'რაჭა-ლეჩხუმი', lat: 42.6469, lon: 42.7644),
+  GeorgianCity(name: 'ლენტეხი', nameEn: 'Lentekhi', region: 'რაჭა-ლეჩხუმი', lat: 42.7894, lon: 42.7252),
+
+  // meteo.gov.ge-ის დამატებითი დასახლებები — კურორტები, საკურორტო ცენტრები
+  // და ოკუპირებული ტერიტორიების ადმინისტრაციული ცენტრები.
+  GeorgianCity(name: 'აბასთუმანი', nameEn: 'Abastumani', region: 'სამცხე-ჯავახეთი', lat: 41.7536, lon: 42.8319),
+  GeorgianCity(name: 'საირმე', nameEn: 'Sairme', region: 'იმერეთი', lat: 41.9060, lon: 42.7440),
+  GeorgianCity(name: 'წყალტუბო', nameEn: 'Tsqaltubo', region: 'იმერეთი', lat: 42.3233, lon: 42.6016),
+  GeorgianCity(name: 'ბახმარო', nameEn: 'Bakhmaro', region: 'გურია', lat: 41.8513, lon: 42.3245),
+  GeorgianCity(name: 'თიანეთი', nameEn: 'Tianeti', region: 'მცხეთა-მთიანეთი', lat: 42.1098, lon: 44.9682),
+  GeorgianCity(name: 'ფასანაური', nameEn: 'Pasanauri', region: 'მცხეთა-მთიანეთი', lat: 42.3489, lon: 44.6905),
+  GeorgianCity(name: 'ცხინვალი', nameEn: 'Tskhinvali', region: 'შიდა ქართლი', lat: 42.2257, lon: 43.9700),
+  GeorgianCity(name: 'სოხუმი', nameEn: 'Sokhumi', region: 'აფხაზეთი', lat: 43.0031, lon: 41.0197),
 ];
